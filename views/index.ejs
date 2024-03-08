@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>socket data
+    </title>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <style>
+         form{
+            display: flex;
+            flex-wrap: wrap;
+             gap: 2em;
+            width: 30rem;
+            margin : auto;
+            padding :1em
+        }
+
+        input{
+            padding: 1rem;
+        }
+        
+    </style>
+</head>
+<body>
+    <form id="user-form">
+        <input type="text" placeholder="First Name" name="firstName"  required>
+        <input type="text" placeholder="Last Name" name="lastName"  required >
+        <input type="number" placeholder="Mobile no" name="mobileNo"  required>
+        <input type="email" placeholder="Email id" name="emailId"  id="mail" required>
+        <input type="text" placeholder="Street" name="address[street]"  required>
+        <input type="text" placeholder="City" name="address[city]"  required>
+        <input type="text" placeholder="State" name="address[state]"  required>
+        <input type="text" placeholder="Country" name="address[country]"  required>
+        <input type="text" placeholder="Login id" name="loginId"  required>
+        <input type="password" placeholder="Password" name="password" required>
+        <button type="submit" id="submit">Save</button>
+    </form>
+    <a href="/user">Rooms</a>
+    <div id="users"></div>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io();
+        let response;
+
+        $(document).ready(function () {
+            $('#user-form').on('submit', async function (e) {
+                e.preventDefault();
+                const user = $(this).serialize();
+                await $.post('/api/users', user);
+                $(this)[0].reset();
+            });
+        });
+
+        socket.on('User-room', ({userId,fullName}) => {
+            console.log(`User ${userId} joined 'live room'`);
+            $('#users').append(`<p>User ${userId} joined 'live room'</p>`);
+            socket.emit('User-room',{userId,fullName})
+
+        });
+    </script>
+</body>
+</html>
